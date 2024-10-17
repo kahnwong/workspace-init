@@ -3,11 +3,12 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/spf13/viper"
 
@@ -30,22 +31,23 @@ var rootCmd = &cobra.Command{
 		var category core.Category
 		err := viper.UnmarshalKey("category", &category)
 		if err != nil {
-			panic(err) // [TODO] replace log
+			log.Fatal().Err(err).Msg("Failed to unmarshal category")
 		}
 
 		// clone category
 		for _, group := range category {
 			for _, repo := range group.Repos {
 				repoPath := CreateDir(workspacePath, username, group.Group, repo)
+				repoUrl := fmt.Sprintf("git@github.com:%s/%s.git", username, repo)
 				_, err := git.PlainClone(repoPath, false, &git.CloneOptions{
 					Auth:     publicKeys,
-					URL:      fmt.Sprintf("git@github.com:%s/%s.git", username, repo),
+					URL:      repoUrl,
 					Progress: os.Stdout,
 				})
 				if errors.Is(err, git.ErrRepositoryAlreadyExists) {
 
 				} else if err != nil {
-					log.Fatal(err)
+					log.Fatal().Err(err).Msgf("Failed to clone %s", repoUrl)
 				}
 			}
 		}
@@ -60,6 +62,8 @@ func Execute() {
 }
 
 func init() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+
 	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
@@ -73,8 +77,7 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		//log.Fatal().Err(err).Msg("") // [TODO] replace with zerolog
-		log.Fatal(err)
+		log.Fatal().Err(err).Msg("")
 	}
 }
 
@@ -84,7 +87,7 @@ func CreateDir(workspacePath string, username string, group string, repo string)
 	repoPath := filepath.Join(workspacePath, username, group, repo)
 	err := os.MkdirAll(filepath.Join(repoPath), os.ModePerm)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err).Msgf("Error creating directory %s", repoPath)
 	}
 	//fmt.Printf("Created directory: %s\n", repoPath)
 
