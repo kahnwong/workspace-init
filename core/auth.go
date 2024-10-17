@@ -4,12 +4,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/spf13/viper"
+
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
 
 func InitPublicKey() *ssh.PublicKeys {
-	config := ReadConfig() // [TODO] use viper
-	privateKeyFile := ExpandHome(config.PrivateKeyFile)
+	privateKeyFile := ExpandHome(viper.GetString("privateKeyFile"))
 
 	_, err := os.Stat(privateKeyFile)
 	if err != nil {
