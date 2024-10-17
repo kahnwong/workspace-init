@@ -1,4 +1,4 @@
-package github
+package core
 
 import (
 	"encoding/json"

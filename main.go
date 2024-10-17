@@ -2,36 +2,14 @@ package main
 
 import (
 	"fmt"
-	"os"
 
-	"gopkg.in/yaml.v3"
-
-	"github.com/kahnwong/workspace-init/github"
+	"github.com/kahnwong/workspace-init/core"
 )
 
-type RepoGroups struct {
-	Repos []struct {
-		Group string   `json:"group"`
-		Repos []string `json:"repos"`
-	} `json:"repos"`
-}
-
 func main() {
-	repos := github.GetRepos()
+	repos := core.GetRepos()
 	fmt.Println(repos)
 
-	// read yaml
-	configFile, err := os.ReadFile("repos.yaml")
-	if err != nil {
-		panic(err)
-	}
-
-	// Unmarshal the YAML data into a Config struct
-	var repoGroups RepoGroups
-	err = yaml.Unmarshal(configFile, &repoGroups)
-	if err != nil {
-		panic(err)
-	}
-
+	repoGroups := core.ReadConfig()
 	fmt.Println(repoGroups)
 }
