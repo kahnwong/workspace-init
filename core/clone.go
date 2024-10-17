@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
@@ -47,8 +48,14 @@ func CloneRepos() {
 
 	// clone
 	for _, group := range category {
+		var wg sync.WaitGroup
+		wg.Add(len(group.Repos))
 		for _, repo := range group.Repos {
-			clone(publicKeys, workspacePath, group.Group, username, repo)
+			go func() {
+				clone(publicKeys, workspacePath, group.Group, username, repo)
+				wg.Done()
+			}()
 		}
+		wg.Wait()
 	}
 }
