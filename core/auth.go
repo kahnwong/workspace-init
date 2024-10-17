@@ -9,7 +9,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
 
-func InitPublicKey() *ssh.PublicKeys {
+func initPublicKey() *ssh.PublicKeys {
 	privateKeyFile := ExpandHome(viper.GetString("privateKeyFile"))
 
 	_, err := os.Stat(privateKeyFile)
