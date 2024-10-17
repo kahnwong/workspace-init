@@ -1,29 +1,33 @@
 package core
 
 import (
+	"log"
 	"os"
 
 	"gopkg.in/yaml.v3"
 )
 
-type RepoGroups struct {
-	Repos []struct {
-		Group string   `json:"group"`
-		Repos []string `json:"repos"`
-	} `json:"repos"`
+type Config struct {
+	PrivateKeyFile string `yaml:"privateKeyFile"`
+	WorkspacePath  string `yaml:"workspacePath"`
+	GitUsername    string `yaml:"gitUsername"`
+	Repos          []struct {
+		Group string   `yaml:"group"`
+		Repos []string `yaml:"repos"`
+	} `yaml:"repos"`
 }
 
-func ReadConfig() RepoGroups {
-	configFile, err := os.ReadFile("repos.yaml")
+func ReadConfig() Config {
+	configFile, err := os.ReadFile("workspace-init.yaml")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	var repoGroups RepoGroups
-	err = yaml.Unmarshal(configFile, &repoGroups)
+	var config Config
+	err = yaml.Unmarshal(configFile, &config)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	return repoGroups
+	return config
 }
