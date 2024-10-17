@@ -12,8 +12,8 @@ type RepoList []struct {
 	Name string `json:"name"`
 }
 
-func GetRepos() []string {
-	limit := 5 // [TODO] set to 300 later
+func getRepos() []string {
+	limit := 10 // [TODO] set to 300 later
 	repoList, _, err := gh.Exec("repo", "list", "--no-archived", "--limit", strconv.Itoa(limit), "--json", "name")
 	if err != nil {
 		log.Fatal().Err(err).Msg("Error getting repo list")

@@ -16,8 +16,6 @@ var rootCmd = &cobra.Command{
 	Use:   "workspace-init",
 	Short: "Clone repos into separate folders, depending on grouping",
 	Run: func(cmd *cobra.Command, args []string) {
-		////repos := core.GetRepos() // [TODO] cross-validate with category in config
-
 		core.CloneRepos()
 	},
 }

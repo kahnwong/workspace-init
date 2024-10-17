@@ -40,19 +40,15 @@ func CloneRepos() {
 	workspacePath := ExpandHome(viper.GetString("workspacePath"))
 	publicKeys := initPublicKey()
 
-	var category Category
-	err := viper.UnmarshalKey("category", &category)
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to unmarshal category")
-	}
+	categoryConfig := parseCategoryConfig()
 
 	// clone
-	for _, group := range category {
+	for _, category := range categoryConfig {
 		var wg sync.WaitGroup
-		wg.Add(len(group.Repos))
-		for _, repo := range group.Repos {
+		wg.Add(len(category.Repos))
+		for _, repo := range category.Repos {
 			go func() {
-				clone(publicKeys, workspacePath, group.Group, username, repo)
+				clone(publicKeys, workspacePath, category.Group, username, repo)
 				wg.Done()
 			}()
 		}
