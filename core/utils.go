@@ -15,7 +15,13 @@ func ExpandHome(path string) string {
 }
 
 func createDir(workspacePath string, username string, group string, repo string) string {
-	repoPath := filepath.Join(workspacePath, username, group, repo)
+	repoPath := ""
+	if group != "" {
+		repoPath = filepath.Join(workspacePath, username, group, repo)
+	} else {
+		repoPath = filepath.Join(workspacePath, username, repo)
+	}
+
 	err := os.MkdirAll(filepath.Join(repoPath), os.ModePerm)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Error creating directory %s", repoPath)

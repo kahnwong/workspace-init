@@ -40,9 +40,21 @@ func CloneRepos() {
 	workspacePath := ExpandHome(viper.GetString("workspacePath"))
 	publicKeys := initPublicKey()
 
-	categoryConfig := parseCategoryConfig()
+	// clone: no category
+	noCategoryRepos := viper.GetStringSlice("noCategory")
 
-	// clone
+	var wg sync.WaitGroup
+	wg.Add(len(noCategoryRepos))
+	for _, repo := range noCategoryRepos {
+		go func() {
+			clone(publicKeys, workspacePath, "", username, repo)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
+	// clone: category
+	categoryConfig := parseCategoryConfig()
 	for _, category := range categoryConfig {
 		var wg sync.WaitGroup
 		wg.Add(len(category.Repos))
