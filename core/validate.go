@@ -1,9 +1,15 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/spf13/viper"
+)
 
 func Validate() {
 	reposAll := getRepos()
+	excludeRepos := viper.GetStringSlice("excludeRepos")
+	reposAllExcluded := subtractArrays(reposAll, excludeRepos)
 
 	categoryConfig := parseCategoryConfig()
 	var reposConfig []string
@@ -11,7 +17,7 @@ func Validate() {
 		reposConfig = append(reposConfig, category.Repos...)
 	}
 
-	reposNotInConfig := subtractArrays(reposAll, reposConfig)
+	reposNotInConfig := subtractArrays(reposAllExcluded, reposConfig)
 	if len(reposNotInConfig) > 0 {
 		fmt.Println("Following repos are not in config:")
 
