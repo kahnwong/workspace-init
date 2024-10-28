@@ -38,7 +38,7 @@ func init() {
 func initConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".") // [TODO] change to `~/.config/workspace-init`
+	viper.AddConfigPath("$HOME/.config/workspace-init")
 
 	err := viper.ReadInConfig()
 	if err != nil {
