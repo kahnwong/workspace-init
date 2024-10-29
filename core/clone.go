@@ -15,6 +15,7 @@ import (
 var (
 	Green  = color.New(color.FgHiGreen).SprintFunc()
 	Yellow = color.New(color.FgYellow).SprintFunc()
+	Blue   = color.New(color.FgBlue).SprintFunc()
 )
 
 func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, username string, repo string) {
@@ -27,6 +28,11 @@ func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, usern
 	})
 	if errors.Is(err, git.ErrRepositoryAlreadyExists) {
 		fmt.Println(Yellow(fmt.Sprintf("Repo %s already exists", repoUrl)))
+		hash, err := pull(publicKeys, repoPath)
+		if !errors.Is(err, git.NoErrAlreadyUpToDate) {
+		} else {
+			fmt.Println(Blue(fmt.Sprintf("Pulled %s", hash)))
+		}
 	} else if err != nil {
 		log.Fatal().Err(err).Msgf("Failed to clone %s", repoUrl)
 	} else {
