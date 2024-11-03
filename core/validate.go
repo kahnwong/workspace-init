@@ -7,11 +7,16 @@ import (
 )
 
 func Validate() {
-	reposAll := getRepos()
+	reposActive := getRepos(false)
+	reposArchived := getRepos(true)
+	reposAll := append(reposActive, reposArchived...)
+
+	archivedRepos := viper.GetStringSlice("archived")
 	noCategoryRepos := viper.GetStringSlice("noCategory")
 	excludeRepos := viper.GetStringSlice("excludeRepos")
 
-	reposExcludeNoCategory := subtractArrays(reposAll, noCategoryRepos)
+	reposExcludeArchived := subtractArrays(reposAll, archivedRepos)
+	reposExcludeNoCategory := subtractArrays(reposExcludeArchived, noCategoryRepos)
 	reposAllExcluded := subtractArrays(reposExcludeNoCategory, excludeRepos)
 
 	categoryConfig := parseCategoryConfig()
