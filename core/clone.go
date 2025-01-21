@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"sync"
 
+	cliBase "github.com/kahnwong/cli-base"
+
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/rs/zerolog/log"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -36,25 +37,12 @@ func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, usern
 
 func CloneRepos() {
 	// config
-	username := viper.GetString("gitUsername")
-	workspacePath := ExpandHome(viper.GetString("workspacePath"))
+	username := config.GitUsername
+	workspacePath := cliBase.ExpandHome(config.WorkspacePath)
 	publicKeys := initPublicKey()
 
-	// clone: no category
-	noCategoryRepos := viper.GetStringSlice("noCategory")
-
-	var wg sync.WaitGroup
-	wg.Add(len(noCategoryRepos))
-	for _, repo := range noCategoryRepos {
-		go func() {
-			clone(publicKeys, workspacePath, "", username, repo)
-			wg.Done()
-		}()
-	}
-	wg.Wait()
-
-	// clone: category
-	categoryConfig := parseCategoryConfig()
+	// clone
+	categoryConfig := config.Category
 	for _, category := range categoryConfig {
 		var wg sync.WaitGroup
 		wg.Add(len(category.Repos))

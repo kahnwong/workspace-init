@@ -4,7 +4,7 @@ import "fmt"
 
 func Terraform() {
 	terraformConfig := ""
-	categoryConfig := parseCategoryConfig()
+	categoryConfig := config.Category
 	terraformConfig += `
   repos = tomap({
 `

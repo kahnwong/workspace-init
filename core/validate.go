@@ -2,30 +2,19 @@ package core
 
 import (
 	"fmt"
-
-	"github.com/spf13/viper"
 )
 
 func Validate() {
 	reposActive := getRepos(false)
-	reposArchived := getRepos(true)
-	reposAll := append(reposActive, reposArchived...)
+	excludeRepos := config.ExcludeRepos
+	reposExcluded := subtractArrays(reposActive, excludeRepos)
 
-	archivedRepos := viper.GetStringSlice("archived")
-	noCategoryRepos := viper.GetStringSlice("noCategory")
-	excludeRepos := viper.GetStringSlice("excludeRepos")
-
-	reposExcludeArchived := subtractArrays(reposAll, archivedRepos)
-	reposExcludeNoCategory := subtractArrays(reposExcludeArchived, noCategoryRepos)
-	reposAllExcluded := subtractArrays(reposExcludeNoCategory, excludeRepos)
-
-	categoryConfig := parseCategoryConfig()
 	var reposConfig []string
-	for _, category := range categoryConfig {
+	for _, category := range config.Category {
 		reposConfig = append(reposConfig, category.Repos...)
 	}
 
-	reposNotInConfig := subtractArrays(reposAllExcluded, reposConfig)
+	reposNotInConfig := subtractArrays(reposExcluded, reposConfig)
 	if len(reposNotInConfig) > 0 {
 		fmt.Println("Following repos are not in config:")
 
