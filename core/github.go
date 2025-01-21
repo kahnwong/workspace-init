@@ -20,14 +20,14 @@ func getRepos(isArchived bool) []string {
 	}
 	repoList, _, err := gh.Exec("repo", "list", noArchivedFlag, "--limit", strconv.Itoa(limit), "--json", "name")
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error getting repo list")
+		log.Fatal().Msg("Error getting repo list")
 	}
 
 	// unmarshal json
 	var repoListStruct RepoList
 	err = json.Unmarshal(repoList.Bytes(), &repoListStruct)
 	if err != nil {
-		log.Fatal().Err(err).Msg("Error unmarshalling repo list")
+		log.Fatal().Msg("Error unmarshalling repo list")
 	}
 
 	// create repoListStruct slice

@@ -10,12 +10,12 @@ func initPublicKey() *ssh.PublicKeys {
 	privateKeyFile := ExpandHome(config.PrivateKeyFile)
 	_, err := cliBase.CheckIfConfigExists(privateKeyFile)
 	if err != nil {
-		log.Panic().Err(err).Msgf("Private key doesn't exist at: %s", privateKeyFile)
+		log.Fatal().Msgf("Private key doesn't exist at: %s", privateKeyFile)
 	}
 
 	publicKeys, err := ssh.NewPublicKeysFromFile("git", privateKeyFile, "")
 	if err != nil {
-		log.Panic().Err(err).Msg("Generate publickeys failed")
+		log.Fatal().Msg("Generate publickeys failed")
 	}
 
 	return publicKeys

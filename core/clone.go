@@ -29,7 +29,7 @@ func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, usern
 	if errors.Is(err, git.ErrRepositoryAlreadyExists) {
 		fmt.Println(Yellow(fmt.Sprintf("Repo %s already exists", repoUrl)))
 	} else if err != nil {
-		log.Fatal().Err(err).Msgf("Failed to clone %s", repoUrl)
+		log.Fatal().Msgf("Failed to clone %s", repoUrl)
 	} else {
 		fmt.Println(Green(fmt.Sprintf("Cloned %s", repoUrl)))
 	}

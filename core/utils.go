@@ -24,7 +24,7 @@ func createDir(workspacePath string, username string, group string, repo string)
 
 	err := os.MkdirAll(filepath.Join(repoPath), os.ModePerm)
 	if err != nil {
-		log.Fatal().Err(err).Msgf("Error creating directory %s", repoPath)
+		log.Fatal().Msgf("Error creating directory %s", repoPath)
 	}
 
 	return repoPath
