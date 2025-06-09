@@ -5,7 +5,7 @@ go 1.23.5
 require (
 	github.com/cli/go-gh/v2 v2.12.1
 	github.com/fatih/color v1.18.0
-	github.com/go-git/go-git/v5 v5.16.0
+	github.com/go-git/go-git/v5 v5.16.2
 	github.com/kahnwong/cli-base v0.0.0-20250121091831-4eeecf72423f
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
