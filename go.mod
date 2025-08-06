@@ -6,7 +6,7 @@ require (
 	github.com/cli/go-gh/v2 v2.12.1
 	github.com/fatih/color v1.18.0
 	github.com/go-git/go-git/v5 v5.16.2
-	github.com/kahnwong/cli-base v0.0.0-20250121091831-4eeecf72423f
+	github.com/kahnwong/cli-base v0.0.0-20250806100710-60d4c6902dd9
 	github.com/rs/zerolog v1.34.0
 	github.com/spf13/cobra v1.9.1
 )
@@ -99,7 +99,7 @@ require (
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
