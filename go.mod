@@ -3,7 +3,7 @@ module github.com/kahnwong/workspace-init
 go 1.23.5
 
 require (
-	github.com/cli/go-gh/v2 v2.12.1
+	github.com/cli/go-gh/v2 v2.12.2
 	github.com/fatih/color v1.18.0
 	github.com/go-git/go-git/v5 v5.16.2
 	github.com/kahnwong/cli-base v0.0.0-20250806100710-60d4c6902dd9
