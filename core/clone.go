@@ -18,7 +18,10 @@ var (
 	Yellow = color.New(color.FgYellow).SprintFunc()
 )
 
-func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, username string, repo string) {
+func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo string, username string) {
+	if group == "" { // noCategory
+		group = "."
+	}
 	repoPath := createDir(workspacePath, username, group, repo)
 	repoUrl := fmt.Sprintf("git@github.com:%s/%s.git", username, repo)
 	_, err := git.PlainClone(repoPath, false, &git.CloneOptions{
@@ -42,13 +45,24 @@ func CloneRepos() {
 	publicKeys := initPublicKey()
 
 	// clone
+	noCategoryConfig := config.NoCategory
+	var wg sync.WaitGroup
+	wg.Add(len(noCategoryConfig))
+	for _, repo := range noCategoryConfig {
+		go func() {
+			clone(publicKeys, workspacePath, "", repo, username)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+
 	categoryConfig := config.Category
 	for _, category := range categoryConfig {
 		var wg sync.WaitGroup
 		wg.Add(len(category.Repos))
 		for _, repo := range category.Repos {
 			go func() {
-				clone(publicKeys, workspacePath, category.Group, username, repo)
+				clone(publicKeys, workspacePath, category.Group, repo, username)
 				wg.Done()
 			}()
 		}

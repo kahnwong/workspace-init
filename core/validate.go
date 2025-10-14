@@ -10,6 +10,7 @@ func Validate() {
 	reposExcluded := subtractArrays(reposActive, excludeRepos)
 
 	var reposConfig []string
+	reposConfig = append(reposConfig, config.NoCategory...)
 	for _, category := range config.Category {
 		reposConfig = append(reposConfig, category.Repos...)
 	}

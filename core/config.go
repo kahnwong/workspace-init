@@ -15,6 +15,7 @@ type Config struct {
 	PrivateKeyFile string   `yaml:"privateKeyFile"`
 	WorkspacePath  string   `yaml:"workspacePath"`
 	GitUsername    string   `yaml:"gitUsername"`
+	NoCategory     []string `yaml:"noCategory"`
 	Category       Category `yaml:"category"`
 	ExcludeRepos   []string `yaml:"excludeRepos"`
 }
