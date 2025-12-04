@@ -8,7 +8,7 @@ require (
 	github.com/go-git/go-git/v5 v5.16.3
 	github.com/kahnwong/cli-base v0.0.0-20250904051131-db1ec9f8394b
 	github.com/rs/zerolog v1.34.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 )
 
 require (
