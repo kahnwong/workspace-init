@@ -15,6 +15,7 @@ import (
 
 var (
 	Green  = color.New(color.FgHiGreen).SprintFunc()
+	Blue   = color.New(color.FgBlue).SprintFunc()
 	Yellow = color.New(color.FgYellow).SprintFunc()
 )
 
@@ -29,11 +30,25 @@ func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo 
 		URL:  repoUrl,
 		//Progress: os.Stdout,
 	})
-	if errors.Is(err, git.ErrRepositoryAlreadyExists) {
-		fmt.Println(Yellow(fmt.Sprintf("Repo %s already exists", repoUrl)))
+	if errors.Is(err, git.ErrRepositoryAlreadyExists) { // repo already exists, performing git fetch
+		// Open existing repository and fetch from origin
+		r, err := git.PlainOpen(repoPath)
+		if err != nil {
+			log.Fatal().Msgf("Failed to open existing repo %s: %v", repoPath, err)
+		}
+
+		err = r.Fetch(&git.FetchOptions{
+			Auth:       publicKeys,
+			RemoteName: "origin",
+		})
+		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
+			log.Fatal().Msgf("Failed to fetch origin for %s: %v", repoUrl, err)
+		} else {
+			fmt.Println(Blue(fmt.Sprintf("Fetched origin for %s", repoUrl)))
+		}
 	} else if err != nil {
 		log.Fatal().Msgf("Failed to clone %s", repoUrl)
-	} else {
+	} else { // repo does not exist locally, perform git clone
 		fmt.Println(Green(fmt.Sprintf("Cloned %s", repoUrl)))
 	}
 }
