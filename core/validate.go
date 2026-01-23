@@ -6,7 +6,10 @@ import (
 
 func Validate() {
 	reposActive := getRepos(false)
-	excludeRepos := config.ExcludeRepos
+	var excludeRepos []string
+	for _, group := range config.ExcludeRepos {
+		excludeRepos = append(excludeRepos, group.Repos...)
+	}
 	reposExcluded := subtractArrays(reposActive, excludeRepos)
 
 	var reposConfig []string

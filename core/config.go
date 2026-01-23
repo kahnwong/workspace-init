@@ -11,11 +11,16 @@ type Category []struct {
 	Repos []string `yaml:"repos"`
 }
 
+type ExcludeRepos []struct {
+	Group string   `yaml:"group"`
+	Repos []string `yaml:"repos"`
+}
+
 type Config struct {
-	PrivateKeyFile string   `yaml:"privateKeyFile"`
-	WorkspacePath  string   `yaml:"workspacePath"`
-	GitUsername    string   `yaml:"gitUsername"`
-	NoCategory     []string `yaml:"noCategory"`
-	Category       Category `yaml:"category"`
-	ExcludeRepos   []string `yaml:"excludeRepos"`
+	PrivateKeyFile string       `yaml:"privateKeyFile"`
+	WorkspacePath  string       `yaml:"workspacePath"`
+	GitUsername    string       `yaml:"gitUsername"`
+	NoCategory     []string     `yaml:"noCategory"`
+	Category       Category     `yaml:"category"`
+	ExcludeRepos   ExcludeRepos `yaml:"excludeRepos"`
 }
