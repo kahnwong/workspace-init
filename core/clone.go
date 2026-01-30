@@ -71,7 +71,7 @@ func CloneRepos() error {
 	for _, repo := range noCategoryConfig {
 		go func(r string) {
 			defer wg.Done()
-			if err := clone(publicKeys, workspacePath, "", r, username); err != nil {
+			if err = clone(publicKeys, workspacePath, "", r, username); err != nil {
 				errChan <- err
 			}
 		}(repo)
@@ -92,7 +92,7 @@ func CloneRepos() error {
 		for _, repo := range category.Repos {
 			go func(r string, g string) {
 				defer wg.Done()
-				if err := clone(publicKeys, workspacePath, g, r, username); err != nil {
+				if err = clone(publicKeys, workspacePath, g, r, username); err != nil {
 					errChan <- err
 				}
 			}(repo, category.Group)

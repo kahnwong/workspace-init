@@ -11,8 +11,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "workspace-init",
-	Short: "Clone repos into separate folders, depending on grouping",
+	Use:          "workspace-init",
+	Short:        "Clone repos into separate folders, depending on grouping",
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return core.CloneRepos()
 	},
