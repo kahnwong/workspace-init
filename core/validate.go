@@ -4,8 +4,11 @@ import (
 	"fmt"
 )
 
-func Validate() {
-	reposActive := getRepos(false)
+func Validate() error {
+	reposActive, err := getRepos(false)
+	if err != nil {
+		return err
+	}
 	var excludeRepos []string
 	for _, group := range config.ExcludeRepos {
 		excludeRepos = append(excludeRepos, group.Repos...)
@@ -29,6 +32,7 @@ func Validate() {
 		fmt.Println("All repos are declared in config")
 	}
 
+	return nil
 }
 
 func subtractArrays(array1, array2 []string) []string {

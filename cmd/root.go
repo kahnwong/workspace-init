@@ -13,8 +13,8 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "workspace-init",
 	Short: "Clone repos into separate folders, depending on grouping",
-	Run: func(cmd *cobra.Command, args []string) {
-		core.CloneRepos()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return core.CloneRepos()
 	},
 }
 

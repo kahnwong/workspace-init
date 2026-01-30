@@ -2,17 +2,17 @@ package core
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/cli/go-gh/v2"
-	"github.com/rs/zerolog/log"
 )
 
 type RepoList []struct {
 	Name string `json:"name"`
 }
 
-func getRepos(isArchived bool) []string {
+func getRepos(isArchived bool) ([]string, error) {
 	limit := 300
 	noArchivedFlag := "--no-archived"
 	if isArchived {
@@ -20,14 +20,14 @@ func getRepos(isArchived bool) []string {
 	}
 	repoList, _, err := gh.Exec("repo", "list", noArchivedFlag, "--limit", strconv.Itoa(limit), "--json", "name")
 	if err != nil {
-		log.Fatal().Msg("Error getting repo list")
+		return nil, fmt.Errorf("failed to get repo list: %w", err)
 	}
 
 	// unmarshal json
 	var repoListStruct RepoList
 	err = json.Unmarshal(repoList.Bytes(), &repoListStruct)
 	if err != nil {
-		log.Fatal().Msg("Error unmarshalling repo list")
+		return nil, fmt.Errorf("failed to unmarshal repo list: %w", err)
 	}
 
 	// create repoListStruct slice
@@ -36,5 +36,5 @@ func getRepos(isArchived bool) []string {
 		repos = append(repos, repo.Name)
 	}
 
-	return repos
+	return repos, nil
 }

@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"sync"
 
-	cliBase "github.com/kahnwong/cli-base"
-
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
-	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -19,22 +16,26 @@ var (
 	Yellow = color.New(color.FgYellow).SprintFunc()
 )
 
-func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo string, username string) {
+func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo string, username string) error {
 	if group == "" { // noCategory
 		group = "."
 	}
-	repoPath := createDir(workspacePath, username, group, repo)
+	repoPath, err := createDir(workspacePath, username, group, repo)
+	if err != nil {
+		return err
+	}
 	repoUrl := fmt.Sprintf("git@github.com:%s/%s.git", username, repo)
-	_, err := git.PlainClone(repoPath, false, &git.CloneOptions{
+	_, err = git.PlainClone(repoPath, false, &git.CloneOptions{
 		Auth: publicKeys,
 		URL:  repoUrl,
 		//Progress: os.Stdout,
 	})
 	if errors.Is(err, git.ErrRepositoryAlreadyExists) { // repo already exists, performing git fetch
+		var r *git.Repository
 		// Open existing repository and fetch from origin
-		r, err := git.PlainOpen(repoPath)
+		r, err = git.PlainOpen(repoPath)
 		if err != nil {
-			log.Fatal().Msgf("Failed to open existing repo %s: %v", repoPath, err)
+			return fmt.Errorf("failed to open existing repo %s: %w", repoPath, err)
 		}
 
 		err = r.Fetch(&git.FetchOptions{
@@ -42,45 +43,69 @@ func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo 
 			RemoteName: "origin",
 		})
 		if err != nil && !errors.Is(err, git.NoErrAlreadyUpToDate) {
-			log.Fatal().Msgf("Failed to fetch origin for %s: %v", repoUrl, err)
+			return fmt.Errorf("failed to fetch origin for %s: %w", repoUrl, err)
 		} else {
 			fmt.Println(Blue(fmt.Sprintf("Fetched origin for %s", repoUrl)))
 		}
 	} else if err != nil {
-		log.Fatal().Msgf("Failed to clone %s", repoUrl)
+		return fmt.Errorf("failed to clone %s: %w", repoUrl, err)
 	} else { // repo does not exist locally, perform git clone
 		fmt.Println(Green(fmt.Sprintf("Cloned %s", repoUrl)))
 	}
+	return nil
 }
 
-func CloneRepos() {
+func CloneRepos() error {
 	// config
 	username := config.GitUsername
-	workspacePath := cliBase.ExpandHome(config.WorkspacePath)
-	publicKeys := initPublicKey()
+	publicKeys, err := initPublicKey()
+	if err != nil {
+		return err
+	}
 
 	// clone
 	noCategoryConfig := config.NoCategory
 	var wg sync.WaitGroup
+	errChan := make(chan error, len(noCategoryConfig))
 	wg.Add(len(noCategoryConfig))
 	for _, repo := range noCategoryConfig {
-		go func() {
-			clone(publicKeys, workspacePath, "", repo, username)
-			wg.Done()
-		}()
+		go func(r string) {
+			defer wg.Done()
+			if err := clone(publicKeys, workspacePath, "", r, username); err != nil {
+				errChan <- err
+			}
+		}(repo)
 	}
 	wg.Wait()
+	close(errChan)
+
+	for err = range errChan {
+		if err != nil {
+			return err
+		}
+	}
 
 	categoryConfig := config.Category
 	for _, category := range categoryConfig {
-		var wg sync.WaitGroup
+		errChan = make(chan error, len(category.Repos))
 		wg.Add(len(category.Repos))
 		for _, repo := range category.Repos {
-			go func() {
-				clone(publicKeys, workspacePath, category.Group, repo, username)
-				wg.Done()
-			}()
+			go func(r string, g string) {
+				defer wg.Done()
+				if err := clone(publicKeys, workspacePath, g, r, username); err != nil {
+					errChan <- err
+				}
+			}(repo, category.Group)
 		}
 		wg.Wait()
+		close(errChan)
+
+		for err = range errChan {
+			if err != nil {
+				return err
+			}
+		}
 	}
+
+	return nil
 }

@@ -2,9 +2,24 @@ package core
 
 import (
 	cliBase "github.com/kahnwong/cli-base"
+	"github.com/rs/zerolog/log"
 )
 
-var config = cliBase.ReadYaml[Config]("~/.config/workspace-init/config.yaml")
+var config *Config
+var workspacePath string
+
+func init() {
+	var err error
+	config, err = cliBase.ReadYaml[Config]("~/.config/workspace-init/config.yaml")
+	if err != nil {
+		log.Fatal().Msgf("Failed to read config: %v", err)
+	}
+
+	workspacePath, err = cliBase.ExpandHome(config.WorkspacePath)
+	if err != nil {
+		log.Fatal().Msgf("Failed to expand home path: %v", err)
+	}
+}
 
 type Category []struct {
 	Group string   `yaml:"group"`

@@ -8,8 +8,8 @@ import (
 var validateCmd = &cobra.Command{
 	Use:   "validate",
 	Short: "Display repos not configured in config",
-	Run: func(cmd *cobra.Command, args []string) {
-		core.Validate()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return core.Validate()
 	},
 }
 

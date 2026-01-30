@@ -1,11 +1,10 @@
 package core
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/rs/zerolog/log"
 )
 
 func ExpandHome(path string) string {
@@ -14,7 +13,7 @@ func ExpandHome(path string) string {
 	return strings.Replace(path, "~", home, 1)
 }
 
-func createDir(workspacePath string, username string, group string, repo string) string {
+func createDir(workspacePath string, username string, group string, repo string) (string, error) {
 	repoPath := ""
 	if group != "" {
 		repoPath = filepath.Join(workspacePath, username, group, repo)
@@ -24,8 +23,8 @@ func createDir(workspacePath string, username string, group string, repo string)
 
 	err := os.MkdirAll(filepath.Join(repoPath), os.ModePerm)
 	if err != nil {
-		log.Fatal().Msgf("Error creating directory %s", repoPath)
+		return "", fmt.Errorf("error creating directory %s: %w", repoPath, err)
 	}
 
-	return repoPath
+	return repoPath, nil
 }
