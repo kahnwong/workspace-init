@@ -4,14 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
-
-func ExpandHome(path string) string {
-	home, _ := os.UserHomeDir()
-
-	return strings.Replace(path, "~", home, 1)
-}
 
 func createDir(workspacePath string, username string, group string, repo string) (string, error) {
 	repoPath := ""
