@@ -1,6 +1,8 @@
 package core
 
 import (
+	"flag"
+
 	cliBase "github.com/kahnwong/cli-base"
 	"github.com/rs/zerolog/log"
 )
@@ -12,11 +14,19 @@ func init() {
 	var err error
 	config, err = cliBase.ReadYaml[Config]("~/.config/workspace-init/config.yaml")
 	if err != nil {
+		if flag.Lookup("test.v") != nil {
+			log.Warn().Msgf("Failed to read config (test mode): %v", err)
+			return
+		}
 		log.Fatal().Msgf("Failed to read config: %v", err)
 	}
 
 	workspacePath, err = cliBase.ExpandHome(config.WorkspacePath)
 	if err != nil {
+		if flag.Lookup("test.v") != nil {
+			log.Warn().Msgf("Failed to expand home path (test mode): %v", err)
+			return
+		}
 		log.Fatal().Msgf("Failed to expand home path: %v", err)
 	}
 }
