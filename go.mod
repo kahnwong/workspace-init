@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	github.com/cli/go-gh/v2 v2.13.0
-	github.com/fatih/color v1.18.0
+	github.com/fatih/color v1.19.0
 	github.com/go-git/go-git/v5 v5.17.1
 	github.com/kahnwong/cli-base v0.0.0-20260130183058-8a3218b043b2
 	github.com/rs/zerolog v1.34.0
@@ -38,6 +38,6 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )
