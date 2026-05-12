@@ -6,7 +6,7 @@ require (
 	github.com/cli/go-gh/v2 v2.13.0
 	github.com/fatih/color v1.19.0
 	github.com/go-git/go-git/v5 v5.19.0
-	github.com/kahnwong/cli-base v0.0.0-20260130183058-8a3218b043b2
+	github.com/kahnwong/cli-base v0.0.0-20260512102925-06fe226bcb0d
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
