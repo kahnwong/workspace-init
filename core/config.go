@@ -1,9 +1,10 @@
 package core
 
 import (
+	"testing"
+
 	cliBase "github.com/kahnwong/cli-base"
 	"github.com/rs/zerolog/log"
-	"testing"
 )
 
 var config *Config
@@ -40,11 +41,15 @@ type ExcludeRepos []struct {
 	Repos []string `yaml:"repos"`
 }
 
-type Config struct {
+type Org struct {
 	PrivateKeyFile string       `yaml:"privateKeyFile"`
-	WorkspacePath  string       `yaml:"workspacePath"`
-	GitUsername    string       `yaml:"gitUsername"`
+	Name           string       `yaml:"name"`
 	NoCategory     []string     `yaml:"noCategory"`
 	Category       Category     `yaml:"category"`
 	ExcludeRepos   ExcludeRepos `yaml:"excludeRepos"`
+}
+
+type Config struct {
+	WorkspacePath string `yaml:"workspacePath"`
+	Orgs          []Org  `yaml:"orgs"`
 }

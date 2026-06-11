@@ -12,13 +12,18 @@ type RepoList []struct {
 	Name string `json:"name"`
 }
 
-func getRepos(isArchived bool) ([]string, error) {
+func getRepos(owner string, isArchived bool) ([]string, error) {
 	limit := 300
 	noArchivedFlag := "--no-archived"
 	if isArchived {
 		noArchivedFlag = ""
 	}
-	repoList, _, err := gh.Exec("repo", "list", noArchivedFlag, "--limit", strconv.Itoa(limit), "--json", "name")
+	args := []string{"repo", "list", owner}
+	if noArchivedFlag != "" {
+		args = append(args, noArchivedFlag)
+	}
+	args = append(args, "--limit", strconv.Itoa(limit), "--json", "name")
+	repoList, _, err := gh.Exec(args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get repo list: %w", err)
 	}

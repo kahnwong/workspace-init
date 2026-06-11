@@ -5,31 +5,42 @@ import (
 )
 
 func Validate() error {
-	reposActive, err := getRepos(false)
+	for _, org := range config.Orgs {
+		if err := validateOrg(org); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func validateOrg(org Org) error {
+	reposActive, err := getRepos(org.Name, false)
 	if err != nil {
 		return err
 	}
+
 	var excludeRepos []string
-	for _, group := range config.ExcludeRepos {
+	for _, group := range org.ExcludeRepos {
 		excludeRepos = append(excludeRepos, group.Repos...)
 	}
 	reposExcluded := subtractArrays(reposActive, excludeRepos)
 
 	var reposConfig []string
-	reposConfig = append(reposConfig, config.NoCategory...)
-	for _, category := range config.Category {
+	reposConfig = append(reposConfig, org.NoCategory...)
+	for _, category := range org.Category {
 		reposConfig = append(reposConfig, category.Repos...)
 	}
 
 	reposNotInConfig := subtractArrays(reposExcluded, reposConfig)
 	if len(reposNotInConfig) > 0 {
-		fmt.Println("Following repos are not in config:")
+		fmt.Printf("Following repos are not in config for %s:\n", org.Name)
 
 		for _, repo := range reposNotInConfig {
 			fmt.Printf("- %s\n", repo)
 		}
 	} else {
-		fmt.Println("All repos are declared in config")
+		fmt.Printf("All repos are declared in config for %s\n", org.Name)
 	}
 
 	return nil

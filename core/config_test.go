@@ -8,25 +8,26 @@ import (
 
 func TestConfigUnmarshal(t *testing.T) {
 	yamlData := `
-privateKeyFile: ~/.ssh/id_rsa
 workspacePath: ~/workspace
-gitUsername: testuser
-noCategory:
-  - repo1
-  - repo2
-category:
-  - group: group1
-    repos:
-      - repo3
-      - repo4
-  - group: group2
-    repos:
-      - repo5
-excludeRepos:
-  - group: archived
-    repos:
-      - oldrepo1
-      - oldrepo2
+orgs:
+  - name: testuser
+    privateKeyFile: ~/.ssh/id_rsa
+    noCategory:
+      - repo1
+      - repo2
+    category:
+      - group: group1
+        repos:
+          - repo3
+          - repo4
+      - group: group2
+        repos:
+          - repo5
+    excludeRepos:
+      - group: archived
+        repos:
+          - oldrepo1
+          - oldrepo2
 `
 
 	var config Config
@@ -35,45 +36,49 @@ excludeRepos:
 		t.Fatalf("Failed to unmarshal config: %v", err)
 	}
 
-	// Verify basic fields
-	if config.PrivateKeyFile != "~/.ssh/id_rsa" {
-		t.Errorf("PrivateKeyFile = %q, want %q", config.PrivateKeyFile, "~/.ssh/id_rsa")
-	}
 	if config.WorkspacePath != "~/workspace" {
 		t.Errorf("WorkspacePath = %q, want %q", config.WorkspacePath, "~/workspace")
 	}
-	if config.GitUsername != "testuser" {
-		t.Errorf("GitUsername = %q, want %q", config.GitUsername, "testuser")
+	if len(config.Orgs) != 1 {
+		t.Fatalf("Orgs length = %d, want 1", len(config.Orgs))
+	}
+
+	org := config.Orgs[0]
+	if org.PrivateKeyFile != "~/.ssh/id_rsa" {
+		t.Errorf("PrivateKeyFile = %q, want %q", org.PrivateKeyFile, "~/.ssh/id_rsa")
+	}
+	if org.Name != "testuser" {
+		t.Errorf("Name = %q, want %q", org.Name, "testuser")
 	}
 
 	// Verify noCategory
-	if len(config.NoCategory) != 2 {
-		t.Errorf("NoCategory length = %d, want 2", len(config.NoCategory))
+	if len(org.NoCategory) != 2 {
+		t.Errorf("NoCategory length = %d, want 2", len(org.NoCategory))
 	}
 
 	// Verify category
-	if len(config.Category) != 2 {
-		t.Errorf("Category length = %d, want 2", len(config.Category))
+	if len(org.Category) != 2 {
+		t.Errorf("Category length = %d, want 2", len(org.Category))
 	}
-	if len(config.Category) > 0 {
-		if config.Category[0].Group != "group1" {
-			t.Errorf("Category[0].Group = %q, want %q", config.Category[0].Group, "group1")
+	if len(org.Category) > 0 {
+		if org.Category[0].Group != "group1" {
+			t.Errorf("Category[0].Group = %q, want %q", org.Category[0].Group, "group1")
 		}
-		if len(config.Category[0].Repos) != 2 {
-			t.Errorf("Category[0].Repos length = %d, want 2", len(config.Category[0].Repos))
+		if len(org.Category[0].Repos) != 2 {
+			t.Errorf("Category[0].Repos length = %d, want 2", len(org.Category[0].Repos))
 		}
 	}
 
 	// Verify excludeRepos
-	if len(config.ExcludeRepos) != 1 {
-		t.Errorf("ExcludeRepos length = %d, want 1", len(config.ExcludeRepos))
+	if len(org.ExcludeRepos) != 1 {
+		t.Errorf("ExcludeRepos length = %d, want 1", len(org.ExcludeRepos))
 	}
-	if len(config.ExcludeRepos) > 0 {
-		if config.ExcludeRepos[0].Group != "archived" {
-			t.Errorf("ExcludeRepos[0].Group = %q, want %q", config.ExcludeRepos[0].Group, "archived")
+	if len(org.ExcludeRepos) > 0 {
+		if org.ExcludeRepos[0].Group != "archived" {
+			t.Errorf("ExcludeRepos[0].Group = %q, want %q", org.ExcludeRepos[0].Group, "archived")
 		}
-		if len(config.ExcludeRepos[0].Repos) != 2 {
-			t.Errorf("ExcludeRepos[0].Repos length = %d, want 2", len(config.ExcludeRepos[0].Repos))
+		if len(org.ExcludeRepos[0].Repos) != 2 {
+			t.Errorf("ExcludeRepos[0].Repos length = %d, want 2", len(org.ExcludeRepos[0].Repos))
 		}
 	}
 }

@@ -56,23 +56,31 @@ func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo 
 }
 
 func CloneRepos() error {
-	// config
-	username := config.GitUsername
-	publicKeys, err := initPublicKey()
+	for _, org := range config.Orgs {
+		if err := cloneOrg(org); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func cloneOrg(org Org) error {
+	publicKeys, err := initPublicKey(org)
 	if err != nil {
 		return err
 	}
 
 	// clone
-	noCategoryConfig := config.NoCategory
+	noCategoryConfig := org.NoCategory
 	var wg sync.WaitGroup
 	errChan := make(chan error, len(noCategoryConfig))
 	wg.Add(len(noCategoryConfig))
 	for _, repo := range noCategoryConfig {
 		go func(r string) {
 			defer wg.Done()
-			if err = clone(publicKeys, workspacePath, "", r, username); err != nil {
-				errChan <- err
+			if cloneErr := clone(publicKeys, workspacePath, "", r, org.Name); cloneErr != nil {
+				errChan <- cloneErr
 			}
 		}(repo)
 	}
@@ -85,15 +93,15 @@ func CloneRepos() error {
 		}
 	}
 
-	categoryConfig := config.Category
+	categoryConfig := org.Category
 	for _, category := range categoryConfig {
 		errChan = make(chan error, len(category.Repos))
 		wg.Add(len(category.Repos))
 		for _, repo := range category.Repos {
 			go func(r string, g string) {
 				defer wg.Done()
-				if err = clone(publicKeys, workspacePath, g, r, username); err != nil {
-					errChan <- err
+				if cloneErr := clone(publicKeys, workspacePath, g, r, org.Name); cloneErr != nil {
+					errChan <- cloneErr
 				}
 			}(repo, category.Group)
 		}

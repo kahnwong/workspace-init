@@ -7,8 +7,8 @@ import (
 	cliBase "github.com/kahnwong/cli-base"
 )
 
-func initPublicKey() (*ssh.PublicKeys, error) {
-	privateKeyFile, err := cliBase.ExpandHome(config.PrivateKeyFile)
+func initPublicKey(org Org) (*ssh.PublicKeys, error) {
+	privateKeyFile, err := cliBase.ExpandHome(org.PrivateKeyFile)
 	if err != nil {
 		return nil, fmt.Errorf("failed to expand home path: %w", err)
 	}
