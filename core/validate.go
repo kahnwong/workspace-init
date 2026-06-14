@@ -28,7 +28,7 @@ func validateOrg(org Org) error {
 
 	var reposConfig []string
 	reposConfig = append(reposConfig, org.NoCategory...)
-	for _, category := range org.Category {
+	for _, category := range org.Categories {
 		reposConfig = append(reposConfig, category.Repos...)
 	}
 

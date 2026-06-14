@@ -31,7 +31,7 @@ func init() {
 	}
 }
 
-type Category []struct {
+type Category struct {
 	Group string   `yaml:"group"`
 	Repos []string `yaml:"repos"`
 }
@@ -45,7 +45,7 @@ type Org struct {
 	PrivateKeyFile string       `yaml:"privateKeyFile"`
 	Name           string       `yaml:"name"`
 	NoCategory     []string     `yaml:"noCategory"`
-	Category       Category     `yaml:"category"`
+	Categories     []Category   `yaml:"categories"`
 	ExcludeRepos   ExcludeRepos `yaml:"excludeRepos"`
 }
 

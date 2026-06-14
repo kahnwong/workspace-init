@@ -93,7 +93,7 @@ func cloneOrg(org Org) error {
 		}
 	}
 
-	categoryConfig := org.Category
+	categoryConfig := org.Categories
 	for _, category := range categoryConfig {
 		errChan = make(chan error, len(category.Repos))
 		wg.Add(len(category.Repos))

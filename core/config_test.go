@@ -57,15 +57,15 @@ orgs:
 	}
 
 	// Verify category
-	if len(org.Category) != 2 {
-		t.Errorf("Category length = %d, want 2", len(org.Category))
+	if len(org.Categories) != 2 {
+		t.Errorf("Category length = %d, want 2", len(org.Categories))
 	}
-	if len(org.Category) > 0 {
-		if org.Category[0].Group != "group1" {
-			t.Errorf("Category[0].Group = %q, want %q", org.Category[0].Group, "group1")
+	if len(org.Categories) > 0 {
+		if org.Categories[0].Group != "group1" {
+			t.Errorf("Category[0].Group = %q, want %q", org.Categories[0].Group, "group1")
 		}
-		if len(org.Category[0].Repos) != 2 {
-			t.Errorf("Category[0].Repos length = %d, want 2", len(org.Category[0].Repos))
+		if len(org.Categories[0].Repos) != 2 {
+			t.Errorf("Category[0].Repos length = %d, want 2", len(org.Categories[0].Repos))
 		}
 	}
 
