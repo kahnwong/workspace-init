@@ -15,7 +15,7 @@ orgs:
     noCategory:
       - repo1
       - repo2
-    category:
+    categories:
       - group: group1
         repos:
           - repo3

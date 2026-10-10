@@ -11,22 +11,19 @@ var config *Config
 var workspacePath string
 
 func init() {
+	// Unit tests use their own fixtures, not the user's configuration.
+	if testing.Testing() {
+		return
+	}
+
 	var err error
 	config, err = cliBase.ReadYaml[Config]("~/.config/workspace-init/config.yaml")
 	if err != nil {
-		if testing.Testing() {
-			log.Warn().Msgf("Failed to read config (test mode): %v", err)
-			return
-		}
 		log.Fatal().Msgf("Failed to read config: %v", err)
 	}
 
 	workspacePath, err = cliBase.ExpandHome(config.WorkspacePath)
 	if err != nil {
-		if testing.Testing() {
-			log.Warn().Msgf("Failed to expand home path (test mode): %v", err)
-			return
-		}
 		log.Fatal().Msgf("Failed to expand home path: %v", err)
 	}
 }
