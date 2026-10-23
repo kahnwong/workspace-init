@@ -39,6 +39,9 @@ type ExcludeRepos []struct {
 }
 
 type Org struct {
+	Forge          string       `yaml:"forge"`
+	ForgeSlug      string       `yaml:"forgeSlug"`
+	ForgeSSHPort   int          `yaml:"forgeSSHPort"`
 	PrivateKeyFile string       `yaml:"privateKeyFile"`
 	Name           string       `yaml:"name"`
 	NoCategory     []string     `yaml:"noCategory"`

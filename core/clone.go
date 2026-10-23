@@ -3,6 +3,8 @@ package core
 import (
 	"errors"
 	"fmt"
+	"net"
+	"strconv"
 	"sync"
 
 	"github.com/fatih/color"
@@ -16,15 +18,38 @@ var (
 	Yellow = color.New(color.FgYellow).SprintFunc()
 )
 
-func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo string, username string) error {
+func repoURL(forge, username, repo string, port int) string {
+	if port != 0 {
+		if forge == "" {
+			forge = "github.com"
+		}
+		if host, _, err := net.SplitHostPort(forge); err == nil {
+			forge = host
+		}
+		forge = net.JoinHostPort(forge, strconv.Itoa(port))
+	}
+	if forge != "" {
+		return fmt.Sprintf("ssh://git@%s/%s/%s.git", forge, username, repo)
+	}
+	return fmt.Sprintf("git@github.com:%s/%s.git", username, repo)
+}
+
+func (org Org) folderName() string {
+	if org.ForgeSlug == "" {
+		return org.Name
+	}
+	return org.Name + "-" + org.ForgeSlug
+}
+
+func clone(publicKeys *ssh.PublicKeys, workspacePath string, group string, repo string, org Org) error {
 	if group == "" { // noCategory
 		group = "."
 	}
-	repoPath, err := createDir(workspacePath, username, group, repo)
+	repoPath, err := createDir(workspacePath, org.folderName(), group, repo)
 	if err != nil {
 		return err
 	}
-	repoUrl := fmt.Sprintf("git@github.com:%s/%s.git", username, repo)
+	repoUrl := repoURL(org.Forge, org.Name, repo, org.ForgeSSHPort)
 	_, err = git.PlainClone(repoPath, false, &git.CloneOptions{
 		Auth: publicKeys,
 		URL:  repoUrl,
@@ -79,7 +104,7 @@ func cloneOrg(org Org) error {
 	for _, repo := range noCategoryConfig {
 		go func(r string) {
 			defer wg.Done()
-			if cloneErr := clone(publicKeys, workspacePath, "", r, org.Name); cloneErr != nil {
+			if cloneErr := clone(publicKeys, workspacePath, "", r, org); cloneErr != nil {
 				errChan <- cloneErr
 			}
 		}(repo)
@@ -100,7 +125,7 @@ func cloneOrg(org Org) error {
 		for _, repo := range category.Repos {
 			go func(r string, g string) {
 				defer wg.Done()
-				if cloneErr := clone(publicKeys, workspacePath, g, r, org.Name); cloneErr != nil {
+				if cloneErr := clone(publicKeys, workspacePath, g, r, org); cloneErr != nil {
 					errChan <- cloneErr
 				}
 			}(repo, category.Group)
