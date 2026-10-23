@@ -1,12 +1,12 @@
 module github.com/kahnwong/workspace-init
 
-go 1.27.2
+go 1.27.3
 
 require (
 	github.com/cli/go-gh/v2 v2.16.2
 	github.com/fatih/color v1.19.0
 	github.com/go-git/go-git/v5 v5.19.3
-	github.com/kahnwong/cli-base v0.0.0-20260512102925-06fe226bcb0d
+	github.com/kahnwong/cli-base v0.0.0-20261023075439-f54f361d0e99
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
