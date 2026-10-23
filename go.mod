@@ -1,6 +1,6 @@
 module github.com/kahnwong/workspace-init
 
-go 1.27.2
+go 1.27.3
 
 require (
 	github.com/cli/go-gh/v2 v2.16.2
