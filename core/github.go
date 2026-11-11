@@ -13,7 +13,10 @@ type RepoList []struct {
 }
 
 func getRepos(owner string, isArchived bool) ([]string, error) {
-	limit := 300
+	return getReposWithLimit(owner, isArchived, 300)
+}
+
+func getReposWithLimit(owner string, isArchived bool, limit int) ([]string, error) {
 	noArchivedFlag := "--no-archived"
 	if isArchived {
 		noArchivedFlag = ""
@@ -33,6 +36,11 @@ func getRepos(owner string, isArchived bool) ([]string, error) {
 	err = json.Unmarshal(repoList.Bytes(), &repoListStruct)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal repo list: %w", err)
+	}
+
+	// Cleanup must never treat a truncated list as a complete inventory.
+	if len(repoListStruct) >= limit {
+		return nil, fmt.Errorf("repository list for %s reached limit %d; refusing incomplete results", owner, limit)
 	}
 
 	// create repoListStruct slice
