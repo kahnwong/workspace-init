@@ -15,6 +15,10 @@ func Validate() error {
 }
 
 func validateOrg(org Org) error {
+	if org.Forge != "" {
+		return nil
+	}
+
 	reposActive, err := getRepos(org.Name, false)
 	if err != nil {
 		return err
